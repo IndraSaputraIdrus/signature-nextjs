@@ -24,6 +24,7 @@ export default function Home() {
   };
 
   const submit = async () => {
+    if (canvasRef.current.isEmpty()) return alert("isi semua");
     const image = canvasRef.current.toDataURL("image/jpeg", 0.5);
 
     try {
@@ -40,69 +41,75 @@ export default function Home() {
         }),
       });
 
+      const res = await req.json();
       clear();
-      router.push("/");
+      if (res.msg === "berhasil") router.push("/");
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <main className={`${inter.className} p-20 space-y-4`}>
-      <h1 className="font-semibold text-2xl text-center max-w-[300px]">Add</h1>
-      <div className="flex flex-col max-w-[300px]">
-        <label htmlFor="nama">Nama: </label>
-        <input
-          value={nama}
-          onChange={(e) => setNama(e.target.value)}
-          id="nama"
-          className="border rounded-md px-3 py-1 mt-1"
-        />
-      </div>
-      <div className="flex flex-col max-w-[300px]">
-        <label htmlFor="Barang">Barang: </label>
-        <input
-          value={barang}
-          onChange={(e) => setBarang(e.target.value)}
-          id="Barang"
-          className="border rounded-md px-3 py-1 mt-1"
-        />
-      </div>
-      <div className="flex flex-col max-w-[300px]">
-        <label htmlFor="Barang">Date: </label>
-        <input
-          type="date"
-          value={tanggal}
-          onChange={(e) => setTanggal(e.target.value)}
-          id="Barang"
-          className="border rounded-md px-3 py-1 mt-1"
-        />
-      </div>
-      <div>
-        <label>Tanda tangan:</label>
-        <SignatureCanvas
-          backgroundColor="rgb(255,255,255)"
-          ref={canvasRef}
-          canvasProps={{
-            width: 300,
-            height: 150,
-            className: "mt-1 border border-black rounded-xl",
-          }}
-        />
-      </div>
-      <div className="space-x-3">
-        <button
-          onClick={clear}
-          className="px-3 py-1 bg-red-500 rounded text-white"
-        >
-          Clear
-        </button>
-        <button
-          onClick={submit}
-          className="px-3 py-1 bg-green-500 rounded text-white"
-        >
-          Submit
-        </button>
+    <main className={`${inter.className} px-20 flex items-center flex-col`}>
+      <div className="space-y-4 mt-10">
+        <h1 className="font-semibold text-2xl text-center max-w-[300px]">
+          Add
+        </h1>
+        <div className="flex flex-col max-w-[300px]">
+          <label htmlFor="nama">Nama: </label>
+          <input
+            value={nama}
+            onChange={(e) => setNama(e.target.value)}
+            id="nama"
+            className="border border-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded-md px-3 py-1 mt-1"
+          />
+        </div>
+        <div className="flex flex-col max-w-[300px]">
+          <label htmlFor="Barang">Barang: </label>
+          <input
+            value={barang}
+            onChange={(e) => setBarang(e.target.value)}
+            id="Barang"
+            className="border border-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded-md px-3 py-1 mt-1"
+          />
+        </div>
+        <div className="flex flex-col max-w-[300px]">
+          <label htmlFor="Barang">Date: </label>
+          <input
+            type="date"
+            value={tanggal}
+            onChange={(e) => setTanggal(e.target.value)}
+            id="Barang"
+            className="border border-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded-md px-3 py-1 mt-1"
+          />
+        </div>
+        <div>
+          <label>Tanda tangan:</label>
+          <SignatureCanvas
+            backgroundColor="rgb(255,255,255)"
+            ref={canvasRef}
+            canvasProps={{
+              width: 300,
+              height: 150,
+              className:
+                "mt-1 border border-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded-xl",
+            }}
+          />
+        </div>
+        <div className="space-x-3">
+          <button
+            onClick={clear}
+            className="px-3 py-1 bg-red-500 rounded text-white"
+          >
+            Clear
+          </button>
+          <button
+            onClick={submit}
+            className="px-3 py-1 bg-green-500 rounded text-white"
+          >
+            Submit
+          </button>
+        </div>
       </div>
     </main>
   );
