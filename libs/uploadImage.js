@@ -8,4 +8,6 @@ export default function uploadImage(data) {
   const fileName = `${Date.now()}.jpg`;
 
   fs.writeFileSync(`public/upload/${fileName}`, buffer);
+
+  return fileName;
 }
