@@ -1,15 +1,23 @@
 import Link from "next/link";
-import karyawan from "@/public/karyawan.json";
 import { useEffect, useState } from "react";
+import { database } from "@/firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 export default function Home() {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
 
+  const dbInstance = collection(database, "karyawan");
+
   useEffect(() => {
-    setData(karyawan);
-    setLoading(false);
-  });
+    const getData = async () => {
+      const result = await getDocs(dbInstance);
+      setData(result.docs.map((item) => ({ ...item.data(), id: item.id })));
+      setLoading(false);
+    };
+
+    getData();
+  }, []);
 
   return (
     <main className="p-5 sm:p-20">
@@ -24,21 +32,22 @@ export default function Home() {
         <thead>
           <tr className="bg-slate-800 text-white divide-x">
             <th className="w-1/4 px-3 text-center">Name</th>
+            <th className="w-1/4 px-3 text-center">Barang</th>
             <th className="w-1/4 px-3 text-center">Date</th>
             <th className="w-1/4 px-3 text-center">Sign</th>
             <th className="w-1/4 px-3 text-center">Action</th>
           </tr>
         </thead>
         <tbody>
-          {loading && <p>loading...</p>}
           {!loading &&
             data.map((karyawan) => (
-              <tr key={karyawan.imageName}>
-                <td className="mt-1 px-3 text-center">{karyawan.name}</td>
-                <td className="mt-1 px-3 text-center">{karyawan.date}</td>
+              <tr key={karyawan.tanda_tangan}>
+                <td className="mt-1 px-3 text-center">{karyawan.nama}</td>
+                <td className="mt-1 px-3 text-center">{karyawan.barang}</td>
+                <td className="mt-1 px-3 text-center">{karyawan.tanggal}</td>
                 <td className="mt-1 px-3 text-center">
                   <img
-                    src={`upload/${karyawan.imageName}`}
+                    src={`upload/${karyawan.tanda_tangan}`}
                     className="inline-block h-7 mt-1 object-cover"
                   />
                 </td>

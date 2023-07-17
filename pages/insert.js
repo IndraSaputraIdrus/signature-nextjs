@@ -7,13 +7,13 @@ import moment from "moment";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  const [name, setName] = useState("");
+  const [nama, setNama] = useState("");
   const [barang, setBarang] = useState("");
-  const [date, setDate] = useState("");
+  const [tanggal, setTanggal] = useState("");
 
   useEffect(() => {
-    setDate(moment().format("YYYY-MM-DD"));
-  });
+    setTanggal(moment().format("YYYY-MM-DD"));
+  }, []);
 
   const router = useRouter();
 
@@ -25,24 +25,26 @@ export default function Home() {
 
   const submit = async () => {
     const image = canvasRef.current.toDataURL("image/jpeg", 0.5);
-    const data = {
-      name,
-      barang,
-      date,
-      image,
-    };
 
-    const req = await fetch("/api/insert", {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+    try {
+      const req = await fetch("/api/insert", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nama,
+          barang,
+          tanggal,
+          tanda_tangan: image,
+        }),
+      });
 
-    const res = await req.json();
-    clear();
-    if (res.msg === "berhasil") router.push("/");
+      clear();
+      router.push("/");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -51,8 +53,8 @@ export default function Home() {
       <div className="flex flex-col max-w-[300px]">
         <label htmlFor="nama">Nama: </label>
         <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={nama}
+          onChange={(e) => setNama(e.target.value)}
           id="nama"
           className="border rounded-md px-3 py-1 mt-1"
         />
@@ -70,8 +72,8 @@ export default function Home() {
         <label htmlFor="Barang">Date: </label>
         <input
           type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
+          value={tanggal}
+          onChange={(e) => setTanggal(e.target.value)}
           id="Barang"
           className="border rounded-md px-3 py-1 mt-1"
         />

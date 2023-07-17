@@ -1,27 +1,28 @@
 import uploadImage from "@/libs/uploadImage";
+import { database } from "@/firebase";
+import { addDoc, collection } from "firebase/firestore";
 import moment from "moment";
-import fs from "fs";
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== "POST") res.status(401).end();
 
-  const { name, barang, image, date } = req.body;
+  const { nama, barang, tanda_tangan, tanggal } = req.body;
 
-  const imageName = uploadImage(image);
-
-  const karyawan = fs.readFileSync("public/karyawan.json", "utf-8");
-  const data = JSON.parse(karyawan);
+  const imageName = uploadImage(tanda_tangan);
 
   const result = {
-    name,
+    nama,
     barang,
-    imageName,
-    date: moment(date).format("DD-MM-YYYY"),
+    tanda_tangan: imageName,
+    tanggal: moment(tanggal).format("DD-MM-YYYY"),
   };
 
-  data.push(result);
+  const dbInstance = collection(database, "karyawan");
 
-  fs.writeFileSync("public/karyawan.json", JSON.stringify(data));
-
-  res.json({ msg: "berhasil" });
+  try {
+    await addDoc(dbInstance, result);
+    res.status(200).json({ msg: "berhasil" });
+  } catch (error) {
+    console.log(error);
+  }
 }
